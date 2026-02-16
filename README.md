@@ -31,25 +31,94 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Run (stdio)
+## Run Standalone (stdio)
 
 ```bash
 source .venv/bin/activate
 python server.py
 ```
 
-## MCP Config Example
+## MCP Setup (User-Level)
+
+These examples configure MCP at user scope, not project scope.
+
+Before configuring any client, decide your absolute paths:
+
+- `PYTHON_PATH`: `/absolute/path/to/vision-framework-ocr-mcp/.venv/bin/python`
+- `SERVER_PATH`: `/absolute/path/to/vision-framework-ocr-mcp/server.py`
+
+### Codex (`~/.codex/config.toml`)
+
+1. Open `~/.codex/config.toml`.
+2. Add this block:
+
+```toml
+[mcp_servers.vision-framework-ocr]
+command = "/absolute/path/to/vision-framework-ocr-mcp/.venv/bin/python"
+args = ["/absolute/path/to/vision-framework-ocr-mcp/server.py"]
+```
+
+3. Restart Codex app or start a new Codex session.
+
+### Claude Code CLI (`~/.claude.json`)
+
+1. Open `~/.claude.json`.
+2. Add this object under top-level `mcpServers`:
 
 ```json
 {
   "mcpServers": {
     "vision-framework-ocr": {
-      "command": "/absolute/path/to/.venv/bin/python",
-      "args": ["/absolute/path/to/server.py"]
+      "command": "/absolute/path/to/vision-framework-ocr-mcp/.venv/bin/python",
+      "args": ["/absolute/path/to/vision-framework-ocr-mcp/server.py"]
     }
   }
 }
 ```
+
+3. Restart Claude Code CLI.
+
+Note:
+- If `mcpServers` already exists, merge this entry into the existing object.
+- Do not overwrite other existing MCP servers.
+
+### Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json`)
+
+1. Open `~/Library/Application Support/Claude/claude_desktop_config.json`.
+2. Add this object under top-level `mcpServers`:
+
+```json
+{
+  "mcpServers": {
+    "vision-framework-ocr": {
+      "command": "/absolute/path/to/vision-framework-ocr-mcp/.venv/bin/python",
+      "args": ["/absolute/path/to/vision-framework-ocr-mcp/server.py"]
+    }
+  }
+}
+```
+
+3. Completely quit and relaunch Claude Desktop.
+
+Note:
+- If `mcpServers` already exists, merge this entry into the existing object.
+- Do not overwrite other existing MCP servers.
+
+## Verify
+
+After restart, confirm `vision-framework-ocr` appears in your MCP server list.
+Then call any tool such as:
+
+- `ocr_image`
+- `ocr_text`
+- `ocr_batch`
+- `compile_helper`
+
+## Path Tips
+
+- Use absolute paths.
+- Paths with spaces or non-ASCII characters are supported.
+- In JSON/TOML, keep the full path as one string value.
 
 ## Key Parameters (`ocr_image` / `ocr_batch` / `ocr_text`)
 
